@@ -17,56 +17,56 @@
       </div>
     </div>
     <div class="chat-right">
-      <div class="public-chat-container">
-        <NavTabs plainText="公開聊天室" />
-        <div class="chatroom d-flex flex-column">
-          <div class="chat-content">
-            <div class="msg-container">
-              <div class="left-other">
-                <div class="img-panel">
-                  <img
-                    class="chat-avatar"
-                    src="https://loremflickr.com/240/240/?random=82.34086245031686"
-                    alt=""
-                  />
-                </div>
-
-                <div class="left-msg-panel">
-                  <p class="chat-msg">
-                    left msgleft msgleft msgleft msgleft msgleft msgleft msgleft
-                    msgleft msgleft msgleft msgleft msgleft msgleft msgleft
-                    msgleft msgleft msgleft msgleft msgleft msg
-                  </p>
-                  <p class="chat-time">下午4:00</p>
-                </div>
+      <NavTabs plainText="公開聊天室" />
+      <div class="chatroom">
+        <div class="chat-content">
+          <div class="msg-container">
+            <div class="left-other">
+              <div class="img-panel">
+                <img
+                  class="chat-avatar"
+                  src="https://loremflickr.com/240/240/?random=82.34086245031686"
+                  alt=""
+                />
               </div>
 
-              <div class="right-self">
-                <div class="right-msg-panel">
-                  <p class="chat-msg">
-                    right panelright panelright panelright panelright panelright
-                    panelright panelright panelright panelright panelright
-                    panelright panelright panelright panelright panelright
-                    panelright panel
-                  </p>
-                  <p class="chat-time">下午6:08</p>
-                </div>
+              <div class="left-msg-panel">
+                <p class="chat-msg">
+                  left msgleft msgleft msgleft msgleft msgleft msgleft msgleft
+                  msgleft msgleft msgleft msgleft msgleft msgleft msgleft
+                  msgleft msgleft msgleft msgleft msgleft msg
+                </p>
+                <p class="chat-time">下午4:00</p>
               </div>
-
-              <div class="center-info">
-                <p class="chat-notif">Ralph Edward 離線</p>
-              </div>
-              <!-- <div>{{ typing?'有人輸入中...':'' }}</div> -->
             </div>
+
+            <div class="right-self">
+              <div class="right-msg-panel">
+                <p class="chat-msg">
+                  right panelright panelright panelright panelright panelright
+                  panelright panelright panelright panelright panelright
+                  panelright panelright panelright panelright panelright
+                  panelright panel
+                </p>
+                <p class="chat-time">下午6:08</p>
+              </div>
+            </div>
+
+            <div class="center-info">
+              <p class="chat-notif">Ralph Edward 離線</p>
+            </div>
+            <!-- <div>{{ typing?'有人輸入中...':'' }}</div> -->
           </div>
-          <!-- 聊天室輸入框 -->
-          <div class="input-group">
-            <input type="text" class="form-control" placeholder="輸入訊息..." />
-            <div class="input-group-append">
-              <button class="btn-submit" type="submit">
-                <img src="@/assets/svg/send.svg" alt="home icon" />
-              </button>
-            </div>
+        </div>
+      </div>
+      <!-- 聊天室輸入框 -->
+      <div class="chat-input">
+        <div class="input-group">
+          <input type="text" class="form-control" placeholder="輸入訊息..." />
+          <div class="input-group-append">
+            <button class="btn-submit" type="submit">
+              <img src="@/assets/svg/send.svg" alt="home icon" />
+            </button>
           </div>
         </div>
       </div>
@@ -88,7 +88,7 @@ export default {
     return {
       onlineAccount: 5,
     }
-  }
+  },
 }
 </script>
 
@@ -137,23 +137,32 @@ export default {
 
 // 聊天室
 .chat-right {
+  display: flex;
+  flex-direction: column;
   flex-grow: 1;
-  height: 100vh;
+  // height: 100vh;
 }
 
 .chatroom {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
+  // display: flex;
+  // flex-direction: column;
+  // height: 100vh;
+  // flex-basis: 0;
 }
 
 .chat-content {
-  flex-grow: 2;
-  display: flex;
-  flex-direction: column;
-  justify-content: end;
+  // flex-grow: 1;
+  // display: flex;
+  // flex-direction: column;
+  // justify-content: end;
   padding: 1.5em 0;
-  border-bottom: 1px solid $popular-border;
+  height: 100%;
+  // height: 1092px;
+}
+
+.chat-input {
+  margin-top: auto;
+  // flex-basis: 55px;
 }
 
 .msg-container {
@@ -161,10 +170,7 @@ export default {
   flex-direction: column;
   justify-content: flex-start;
 }
-.input-group {
-  height: 55px;
-  border-bottom: 1px solid $popular-border;
-}
+
 .chat-time {
   font-size: 13px;
   font-weight: 400;
@@ -232,6 +238,14 @@ export default {
   }
 }
 
+.input-group {
+  height: 55px;
+  display: flex;
+  align-items: center;
+  padding: 12px 5px 12px 15px;
+  border-top: 1px solid $popular-border;
+}
+
 input {
   flex: 1;
   height: 32px;
@@ -242,12 +256,5 @@ input {
     color: $main-text;
     opacity: 40%;
   }
-}
-
-.input-group {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 12px 5px 12px 15px;
 }
 </style>
