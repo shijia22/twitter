@@ -18,7 +18,7 @@
     </div>
     <div class="chat-right">
       <NavTabs plainText="公開聊天室" />
-      <div class="chatroom">
+      <div class="chatroom scrollbar">
         <div class="chat-content">
           <div class="msg-container">
             <div class="left-other">
@@ -32,21 +32,18 @@
 
               <div class="left-msg-panel">
                 <p class="chat-msg">
-                  left msgleft msgleft msgleft msgleft msgleft msgleft msgleft
-                  msgleft msgleft msgleft msgleft msgleft msgleft msgleft
-                  msgleft msgleft msgleft msgleft msgleft msg
+                  Amet minim mollit non deserunt ullamco est sit aliqua dolor do
+                  amet sint.
                 </p>
                 <p class="chat-time">下午4:00</p>
               </div>
             </div>
-
             <div class="right-self">
               <div class="right-msg-panel">
                 <p class="chat-msg">
-                  right panelright panelright panelright panelright panelright
-                  panelright panelright panelright panelright panelright
-                  panelright panelright panelright panelright panelright
-                  panelright panel
+                  Nulla Lorem mollit cupidatat irure. Laborum magna nulla duis
+                  ullamco cillum dolor. Voluptate exercitation incididunt
+                  aliquip deserunt reprehenderit elit laborum.
                 </p>
                 <p class="chat-time">下午6:08</p>
               </div>
@@ -62,15 +59,19 @@
       <!-- 聊天室輸入框 -->
       <div class="chat-input">
         <div class="input-group">
-          <input v-model="message"
-              type="text"
-              class="form-control"
-              placeholder="輸入訊息..."
-              @keyup.enter="sendMessage"/>
+          <input
+            v-model="message"
+            type="text"
+            class="form-control"
+            placeholder="輸入訊息..."
+            @keyup.enter="sendMessage"
+          />
           <div class="input-group-append">
-            <button @click.stop.prevent="sendMessage"
-                class="btn-submit"
-                type="submit">
+            <button
+              @click.stop.prevent="sendMessage"
+              class="btn-submit"
+              type="submit"
+            >
               <img src="@/assets/svg/send.svg" alt="home icon" />
             </button>
           </div>
@@ -99,7 +100,7 @@ Vue.use(
         token: token,
       },
       query: {
-        "my-key": "my-value",
+        'my-key': 'my-value',
       },
     }),
     vuex: {
@@ -212,6 +213,7 @@ export default {
 
 .chatroom {
   margin-top: auto;
+  overflow-y: scroll;
 }
 
 .chat-content {
@@ -281,7 +283,7 @@ export default {
 .center-info {
   display: flex;
   justify-content: center;
-  margin-bottom: 1em;
+  margin-bottom: 0.938rem;
   .chat-notif {
     background-color: #e5e5e5;
     color: #657786;
@@ -309,6 +311,18 @@ input {
   &::placeholder {
     color: $main-text;
     opacity: 40%;
+  }
+}
+
+.scrollbar {
+  // 整體的樣式
+  &::-webkit-scrollbar {
+    width: 0.25rem;
+  }
+  // bar的樣式
+  &::-webkit-scrollbar-thumb {
+    background-color: $popular-border;
+    border-radius: 2px;
   }
 }
 </style>
