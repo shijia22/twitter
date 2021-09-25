@@ -19,9 +19,12 @@
       <template v-else>
         <div class="btn-control user d-flex justify-content-end">
           <!-- message -->
-          <button type="button" class="btn btn-msg">
-            <i class="far fa-envelope fa-lg"></i>
-          </button>
+          <!-- TODO:待新增跳轉 ID -->
+          <router-link href="" :to="{ name: 'message'}">
+            <button type="button" class="btn btn-msg">
+              <i class="far fa-envelope fa-lg"></i>
+            </button>
+          </router-link>
           <!-- notify -->
           <button
             v-if="user.isNotified"
@@ -72,7 +75,7 @@
       <div class="card-body d-flex flex-column">
         <p class="card-name">{{ user.name }}</p>
         <router-link class="card-account" to="#">{{
-          '@'+user.account
+          '@' + user.account
         }}</router-link>
         <p class="introduction my-2">
           {{ user.introduction }}
@@ -91,7 +94,9 @@
           </div>
           <div class="follower-wrapper ml-5">
             <span class="follower">{{ user.followerCount }} 位</span>
-            <router-link class="a-follower" :to="{
+            <router-link
+              class="a-follower"
+              :to="{
                 name: 'followers',
                 params: { userid: this.$route.params.userid },
               }"
@@ -111,10 +116,10 @@
 </template>
 
 <script>
-import UserEditModal from "./../components/UserEditModal.vue";
-import { mapState } from "vuex";
-import userAPI from "./../apis/user";
-import { Toast } from "./../utils/helpers";
+import UserEditModal from './../components/UserEditModal.vue'
+import { mapState } from 'vuex'
+import userAPI from './../apis/user'
+import { Toast } from './../utils/helpers'
 
 export default {
   components: {
@@ -127,67 +132,67 @@ export default {
     },
   },
   watch: {
-    initialUser (newValue) {
+    initialUser(newValue) {
       this.user = {
         ...this.user,
-        ...newValue
+        ...newValue,
       }
-    }
+    },
   },
   data() {
     return {
       user: this.initialUser,
       isModalVisible: false,
-    };
+    }
   },
   computed: {
-    ...mapState(["currentUser", "isAuthenticated"]),
+    ...mapState(['currentUser', 'isAuthenticated']),
   },
   methods: {
     showModal() {
-      this.isModalVisible = true;
+      this.isModalVisible = true
     },
     closeModal() {
-      this.isModalVisible = false;
+      this.isModalVisible = false
     },
     async follow() {
       try {
-        const { data } = await userAPI.addFollowed({ id: this.user.id });
-        if (data.status !== "success") {
-          throw new Error(data.message);
+        const { data } = await userAPI.addFollowed({ id: this.user.id })
+        if (data.status !== 'success') {
+          throw new Error(data.message)
         }
         Toast.fire({
-          icon: "success",
-          title: "成功跟隨",
-        });
-        this.user.isFollowed = true;
-        this.user.followerCount++;
+          icon: 'success',
+          title: '成功跟隨',
+        })
+        this.user.isFollowed = true
+        this.user.followerCount++
       } catch (error) {
         console.log(error)
         Toast.fire({
-          icon: "error",
-          title: "無法跟隨，請稍後再試",
-        });
+          icon: 'error',
+          title: '無法跟隨，請稍後再試',
+        })
       }
     },
     async unfollow() {
       try {
-        const { data } = await userAPI.deleteFollowed({ id: this.user.id });
-        if (data.status !== "success") {
-          throw new Error(data.message);
+        const { data } = await userAPI.deleteFollowed({ id: this.user.id })
+        if (data.status !== 'success') {
+          throw new Error(data.message)
         }
         Toast.fire({
-          icon: "success",
-          title: "成功取消跟隨",
-        });
-        this.user.isFollowed = false;
-        this.user.followerCount--;
+          icon: 'success',
+          title: '成功取消跟隨',
+        })
+        this.user.isFollowed = false
+        this.user.followerCount--
       } catch (error) {
         console.log(error)
         Toast.fire({
-          icon: "error",
-          title: "無法取消跟隨，請稍後再試",
-        });
+          icon: 'error',
+          title: '無法取消跟隨，請稍後再試',
+        })
       }
     },
     notify() {
@@ -195,22 +200,22 @@ export default {
       this.user = {
         ...this.user,
         isNotified: true,
-      };
+      }
     },
     unNotify() {
       //TODO emit or call api
       this.user = {
         ...this.user,
         isNotified: false,
-      };
+      }
     },
     handleAfterSubmit(data) {
       console.log(data)
       this.user = { ...this.user, ...data }
-      this.isModalVisible = false;
+      this.isModalVisible = false
     },
   },
-};
+}
 </script>
 
 <style lang="scss" scoped>
