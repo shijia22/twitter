@@ -4,7 +4,7 @@
       <NavBars />
     </div>
     <div class="msg-center">
-      <NavTabs plainText="訊息" :isMsg="true"/>
+      <NavTabs plainText="訊息" :isMsg="true" />
       <a class="msg-user-block">
         <img src="https://i.imgur.com/bwr85EN.png" alt="avatar" />
         <div class="user-detail w-100">
@@ -184,6 +184,10 @@ export default {
     height: 50px;
     margin-right: 0.625rem;
     border-radius: 50px;
+  }
+  &:hover,
+  &:active {
+    border-right: 2px solid $button-color;
   }
 }
 
