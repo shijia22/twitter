@@ -4,7 +4,7 @@
       <NavBars />
     </div>
     <div class="chat-center">
-      <NavTabs plainText="上線使用者" :account="onlineAccount" />
+      <NavTabs plainText="上線使用者" :account="onlineCount" />
       <div class="chat-center-online">
         <a class="online-user-block">
           <img
@@ -117,7 +117,7 @@ export default {
   },
   data() {
     return {
-      onlineCount: 0,
+      onlineCount: 5,
       users: {
         name: "",
         account: "",
