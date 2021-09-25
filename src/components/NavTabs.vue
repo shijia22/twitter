@@ -21,7 +21,7 @@
     <template v-if="account">
       <span class="online-account">&ensp;({{ account }})</span>
     </template>
-    <img src="@/assets/svg/navtab_newmsg.svg" v-if="isMsg" alt="newmsg" class="newmsg">
+    <img src="@/assets/svg/navtab_newmsg.svg" v-if="isMsg" alt="newmsg" class="newmsg cursor-pointer">
   </div>
 </template>
 
