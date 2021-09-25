@@ -24,7 +24,7 @@
       <div class="msg-room scrollbar">
         <div class="msg-content">
           <div class="client">
-            <div class="img-panel">
+            <div class="right-msg-panel">
               <img
                 class="chat-avatar"
                 src="https://loremflickr.com/240/240/?random=82.34086245031686"
@@ -230,7 +230,7 @@ export default {
   display: flex;
   margin-bottom: 1em;
 }
-.img-panel {
+.right-msg-panel {
   display: flex;
   align-items: flex-end;
   .chat-avatar {
