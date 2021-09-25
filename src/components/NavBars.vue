@@ -89,16 +89,16 @@ export default {
             isActive: [],
             icon: () => import("@/components/icon/NavNotify.vue"),
           },
-          // {
-          //   name: "profile",
-          //   text: "私人訊息",
-          //   to: {
-          //     name: "profile",
-          //     params: { userid: this.currentUser.id },
-          //   },
-          //   isActive: [],
-          //   icon: () => import("@/components/icon/NavProfile.vue"),
-          // },
+          {
+            name: "message",
+            text: "私人訊息",
+            to: {
+              name: "message",
+              // params: { userid: this.currentUser.id },
+            },
+            isActive: [],
+            icon: () => import("@/components/icon/NavNotify.vue"),
+          },
           {
             name: "profile",
             text: "個人資料",

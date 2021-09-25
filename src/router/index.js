@@ -34,11 +34,11 @@ const routes = [
     name: 'chat',
     component: () => import('@/views/Chat.vue'),
   },
-  // {
-  //   path: '/message',
-  //   name: 'message',
-  //   component: () => import('../views/Message.vue'),
-  // },
+  {
+    path: '/message',
+    name: 'message',
+    component: () => import('../views/Message.vue'),
+  },
   {
     path: '/users/:userid',
     name: 'user',
