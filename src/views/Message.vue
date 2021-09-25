@@ -16,6 +16,7 @@
             <span class="msg-time">日期</span>
           </div>
           <div class="content">Nulla Lorem mollit cupidatat irure....</div>
+          <!-- <div class="content">{{ stringLimit(description) }}</div> -->
         </div>
       </a>
     </div>
@@ -140,16 +141,21 @@ export default {
   //     console.log("socket connected");
   //   },
   // },
-  // methods: {
-  //   sendMessage() {
-  //     if (this.message === "") {
-  //       return;
-  //     }
-  //     console.log('send new message');
-  //     this.$socket.emit("message", this.message);
-  //     this.message = "";
-  //   },
-  // },
+  methods: {
+    stringLimit(description) {
+      return description.length > 31
+        ? description.slice(0, 31) + '...'
+        : description
+    },
+    // sendMessage() {
+    //   if (this.message === "") {
+    //     return;
+    //   }
+    //   console.log('send new message');
+    //   this.$socket.emit("message", this.message);
+    //   this.message = "";
+    // },
+  },
   // computed: {
   //   ...mapState(["currentUser"]),
   // },
