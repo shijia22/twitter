@@ -62,9 +62,15 @@
       <!-- 聊天室輸入框 -->
       <div class="chat-input">
         <div class="input-group">
-          <input type="text" class="form-control" placeholder="輸入訊息..." />
+          <input v-model="message"
+              type="text"
+              class="form-control"
+              placeholder="輸入訊息..."
+              @keyup.enter="sendMessage"/>
           <div class="input-group-append">
-            <button class="btn-submit" type="submit">
+            <button @click.stop.prevent="sendMessage"
+                class="btn-submit"
+                type="submit">
               <img src="@/assets/svg/send.svg" alt="home icon" />
             </button>
           </div>
@@ -75,21 +81,82 @@
 </template>
 
 <script>
-import NavBars from '@/components/NavBars.vue'
-import NavTabs from '@/components/NavTabs.vue'
-
+import NavBars from "@/components/NavBars.vue";
+import NavTabs from "@/components/NavTabs.vue";
+import { mapState } from "vuex";
+//stocket io
+import Vue from "vue";
+import store from "../store";
+import VueSocketIO from "vue-socket.io";
+import SocketIO from "socket.io-client";
+const token = localStorage.getItem("token");
+Vue.use(
+  new VueSocketIO({
+    debug: true,
+    connection: SocketIO("http://3101-150-117-52-218.ngrok.io", {
+      reconnectionDelayMax: 10000,
+      auth: {
+        token: token,
+      },
+      query: {
+        "my-key": "my-value",
+      },
+    }),
+    vuex: {
+      store,
+      actionPrefix: "SOCKET_",
+      mutationPrefix: "SOCKET_",
+    },
+  })
+);
 export default {
-  name: 'Chat',
+  name: "Chat",
   components: {
     NavBars,
     NavTabs,
   },
   data() {
     return {
-      onlineAccount: 5,
-    }
+      onlineCount: 0,
+      users: {
+        name: "",
+        account: "",
+        avatar: "",
+      },
+      chatTime: "",
+      message: "",
+      records: [],
+    };
   },
-}
+  mounted() {
+    this.$socket.on("allRecords", (obj) => {
+      console.log("received all records");
+      this.records = obj;
+    });
+    this.$socket.on("newMessage", (obj) => {
+      console.log("received new message");
+      this.records.push(obj);
+    });
+  },
+  socket: {
+    connect() {
+      console.log("socket connected");
+    },
+  },
+  methods: {
+    sendMessage() {
+      if (this.message === "") {
+        return;
+      }
+      console.log('send new message');
+      this.$socket.emit("message", this.message);
+      this.message = "";
+    },
+  },
+  computed: {
+    ...mapState(["currentUser"]),
+  },
+};
 </script>
 
 <style lang="scss" scoped>
