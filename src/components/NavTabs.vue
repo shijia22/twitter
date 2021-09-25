@@ -21,6 +21,7 @@
     <template v-if="account">
       <span class="online-account">&ensp;({{ account }})</span>
     </template>
+    <img src="@/assets/svg/navtab_newmsg.svg" v-if="isMsg" alt="newmsg" class="newmsg">
   </div>
 </template>
 
@@ -51,6 +52,7 @@ export default {
     },
     isbackArrow: Boolean,
     account: Number,
+    isMsg: Boolean,
   },
 }
 </script>
@@ -98,5 +100,12 @@ export default {
     line-height: 18.82px;
     color: $input-placeholder;
   }
+}
+
+.newmsg {
+  width: 24px;
+  height: 24px;
+  margin-left: auto;
+  margin-right: 0.875rem;
 }
 </style>

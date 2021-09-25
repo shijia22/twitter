@@ -4,8 +4,7 @@
       <NavBars />
     </div>
     <div class="msg-center">
-      <NavTabs plainText="訊息" />
-      <!-- <div class="msg-center-online"> -->
+      <NavTabs plainText="訊息" :isMsg="true"/>
       <a class="msg-user-block">
         <img src="https://i.imgur.com/bwr85EN.png" alt="avatar" />
         <div class="user-detail w-100">
@@ -19,7 +18,6 @@
           <div class="content">Nulla Lorem mollit cupidatat irure....</div>
         </div>
       </a>
-      <!-- </div> -->
     </div>
     <div class="msg-right">
       <NavTabs plainText="預留人名" />
