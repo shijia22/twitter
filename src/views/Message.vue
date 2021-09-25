@@ -221,7 +221,7 @@ export default {
 // 訊息中間區
 .msg-room {
   margin-top: auto;
-  padding: 2.5rem 0.938rem;
+  padding: 2.5rem 0.938rem 0 2.5rem;
   overflow-y: scroll;
 }
 
