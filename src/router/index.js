@@ -1,12 +1,12 @@
-import Vue from "vue";
-import VueRouter from "vue-router";
-import Home from "../views/Home.vue";
-import AdminLogin from "../views/AdminLogin.vue";
-import Login from "../views/Login.vue";
-import NotFound from "../views/NotFound.vue";
-import store from "./../store";
+import Vue from 'vue'
+import VueRouter from 'vue-router'
+import Home from '../views/Home.vue'
+import AdminLogin from '../views/AdminLogin.vue'
+import Login from '../views/Login.vue'
+import NotFound from '../views/NotFound.vue'
+import store from './../store'
 
-Vue.use(VueRouter);
+Vue.use(VueRouter)
 
 const routes = [
   {
@@ -23,6 +23,11 @@ const routes = [
     path: '/',
     name: 'Home',
     component: Home,
+  },
+  {
+    path: '/tweets/:id',
+    name: 'tweets',
+    component: () => import('../views/Tweets.vue'),
   },
   // {
   //   path: '/notify',
@@ -106,35 +111,35 @@ const routes = [
 
 const router = new VueRouter({
   routes,
-  linkActiveClass: "router-link-active",
-  linkActive: "router-link-exact-active",
-});
+  linkActiveClass: 'router-link-active',
+  linkActive: 'router-link-exact-active',
+})
 
 //監聽全域的「切換路由」事件
 router.beforeEach(async (to, from, next) => {
-  const isAdminRoute = to.path.includes("admin");
-  const isLoginRoute = to.path.includes("login");
+  const isAdminRoute = to.path.includes('admin')
+  const isLoginRoute = to.path.includes('login')
   // 從 localStorage 取出 token
-  const tokenInLocalStorage = localStorage.getItem("token");
-  const tokenInStore = store.state.token;
+  const tokenInLocalStorage = localStorage.getItem('token')
+  const tokenInStore = store.state.token
   // 預設是尚未驗證
-  let isAuthenticated = store.state.isAuthenticated;
-  let isAdmin = store.state.isAdmin;
+  let isAuthenticated = store.state.isAuthenticated
+  let isAdmin = store.state.isAdmin
 
   // 如果有 token 的話才驗證
   // 比較 localStorage 和 store 中的 token 是否一樣
   if (tokenInLocalStorage && tokenInLocalStorage !== tokenInStore) {
-    isAuthenticated = await store.dispatch("fetchCurrentUser");
-    isAdmin = store.state.isAdmin;
+    isAuthenticated = await store.dispatch('fetchCurrentUser')
+    isAdmin = store.state.isAdmin
   }
   // 如果 token 無效則轉址到登入頁
-  if (!isAuthenticated && !isLoginRoute && to.name !== "register") {
+  if (!isAuthenticated && !isLoginRoute && to.name !== 'register') {
     if (isAdminRoute) {
-      next("/admin/login");
-      return;
+      next('/admin/login')
+      return
     } else {
-      next("/login");
-      return;
+      next('/login')
+      return
     }
   }
   //如果 token 已存在且有效
@@ -143,29 +148,29 @@ router.beforeEach(async (to, from, next) => {
       if (isAdminRoute) {
         //admin登入頁
         if (isAdmin) {
-          next("/admin/tweets"); //admin首頁
-          return;
+          next('/admin/tweets') //admin首頁
+          return
         }
       } else {
         //一般登入頁
         if (!isAdmin) {
-          next("/");
-          return;
+          next('/')
+          return
         }
       }
       //前往(admin) login route
     } else {
       //非login頁, 且非註冊頁
       if (isAdminRoute && !isAdmin) {
-        next("/admin/login");
-        return;
+        next('/admin/login')
+        return
       } else if (!isAdminRoute && isAdmin) {
-        next("/login");
-        return;
+        next('/login')
+        return
       }
     }
   }
-  next();
-});
+  next()
+})
 
-export default router;
+export default router
