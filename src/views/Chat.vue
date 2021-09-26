@@ -4,56 +4,71 @@
       <NavBars />
     </div>
     <div class="chat-center">
-      <NavTabs plainText="上線使用者" :account="onlineCount" />
-      <div class="chat-center-online">
+      <NavTabs plainText="上線使用者" :account="onlineUsers.length" />
+      <div
+        v-for="user in onlineUsers"
+        :key="user.id"
+        class="chat-center-online"
+      >
         <a class="online-user-block">
-          <img
-            src="https://loremflickr.com/240/240/?lock=53.96615135591365"
-            alt="avatar"
-          />
-          <span class="user-name">假:NAME</span>
-          <span class="user-account">假:@用戶名稱</span>
+          <img :src="user.avatar" alt="avatar" />
+          <span class="user-name">{{ user.name }}</span>
+          <span class="user-account">{{ '@'+user.account }}</span>
         </a>
       </div>
     </div>
     <div class="chat-right">
       <NavTabs plainText="公開聊天室" />
-      <div class="chatroom scrollbar">
-        <div class="chat-content">
-          <div class="msg-container">
-            <div class="left-other">
-              <div class="img-panel">
-                <img
-                  class="chat-avatar"
-                  src="https://loremflickr.com/240/240/?random=82.34086245031686"
-                  alt=""
-                />
-              </div>
-
-              <div class="left-msg-panel">
-                <p class="chat-msg">
-                  Amet minim mollit non deserunt ullamco est sit aliqua dolor do
-                  amet sint.
-                </p>
-                <p class="chat-time">下午4:00</p>
-              </div>
+      <div class="chatroom scrollbar" ref="chatroom">
+        <div v-for="record in records" :key="record.index" class="chat-content">
+          <div
+            v-if="!record.broadcast && record.User.id !== currentUser.id"
+            class="client"
+          >
+            <div class="right-msg-panel">
+              <img class="chat-avatar" :src="record.User.avatar" alt="avatar" />
             </div>
-            <div class="right-self">
-              <div class="right-msg-panel">
-                <p class="chat-msg">
-                  Nulla Lorem mollit cupidatat irure. Laborum magna nulla duis
-                  ullamco cillum dolor. Voluptate exercitation incididunt
-                  aliquip deserunt reprehenderit elit laborum.
-                </p>
-                <p class="chat-time">下午6:08</p>
-              </div>
+            <div class="left-msg-panel">
+              <p class="chat-msg">
+                {{ record.message }}
+              </p>
+              <p class="chat-time">
+                {{
+                  isToday(record.createdAt)
+                    ? fromNow(utcOffset(record.createdAt), 'A hh:mm')
+                    : timeFormat(
+                        utcOffset(record.createdAt),
+                        'MM月DD日 A hh:MM'
+                      )
+                }}
+              </p>
             </div>
-
-            <div class="center-info">
-              <p class="chat-notif">Ralph Edward 離線</p>
-            </div>
-            <!-- <div>{{ typing?'有人輸入中...':'' }}</div> -->
           </div>
+          <div
+            v-if="!record.broadcast && record.User.id === currentUser.id"
+            class="self"
+          >
+            <div class="right-msg-panel">
+              <p class="chat-msg">
+                {{ record.message }}
+              </p>
+              <p class="chat-time">
+                {{
+                  isToday(record.createdAt)
+                    ? fromNow(utcOffset(record.createdAt))
+                    : timeFormat(
+                        utcOffset(record.createdAt),
+                        'A hh:MM•YYYY年MM月DD日'
+                      )
+                }}
+              </p>
+            </div>
+          </div>
+
+          <div v-if="record.broadcast" class="center-info">
+            <p class="chat-notif">{{ record.broadcast }}</p>
+          </div>
+          <!-- <div>{{ typing?'有人輸入中...':'' }}</div> -->
         </div>
       </div>
       <!-- 聊天室輸入框 -->
@@ -82,82 +97,109 @@
 </template>
 
 <script>
-import NavBars from "@/components/NavBars.vue";
-import NavTabs from "@/components/NavTabs.vue";
-import { mapState } from "vuex";
+import NavBars from '@/components/NavBars.vue'
+import NavTabs from '@/components/NavTabs.vue'
+import { mapState } from 'vuex'
+import { fromNowFilter } from './../utils/mixins'
+
 //stocket io
-import Vue from "vue";
-import store from "../store";
-import VueSocketIO from "vue-socket.io";
-import SocketIO from "socket.io-client";
-const token = localStorage.getItem("token");
-Vue.use(
-  new VueSocketIO({
-    debug: true,
-    connection: SocketIO("http://3101-150-117-52-218.ngrok.io", {
-      reconnectionDelayMax: 10000,
-      auth: {
-        token: token,
-      },
-      query: {
-        'my-key': 'my-value',
-      },
-    }),
-    vuex: {
-      store,
-      actionPrefix: "SOCKET_",
-      mutationPrefix: "SOCKET_",
-    },
-  })
-);
+import Vue from 'vue'
+import store from '../store'
+import VueSocketIOExt from 'vue-socket.io-extended'
+import { io } from 'socket.io-client'
+const token = localStorage.getItem('token')
+const socket = io('https://good-simple-twitter.herokuapp.com/', {
+  query: { token: token },
+})
+Vue.use(VueSocketIOExt, socket, { store })
 export default {
-  name: "Chat",
+  mixins: [fromNowFilter],
+  name: 'Chat',
   components: {
     NavBars,
     NavTabs,
   },
   data() {
     return {
-      onlineCount: 5,
       users: {
-        name: "",
-        account: "",
-        avatar: "",
+        name: '',
+        account: '',
+        avatar: '',
       },
-      chatTime: "",
-      message: "",
+      chatTime: '',
+      message: '',
       records: [],
-    };
+      onlineUsers: {},
+    }
+  },
+  created() {
+    this.$socket.client.emit('joinRoom')
   },
   mounted() {
-    this.$socket.on("allRecords", (obj) => {
-      console.log("received all records");
-      this.records = obj;
-    });
-    this.$socket.on("newMessage", (obj) => {
-      console.log("received new message");
-      this.records.push(obj);
-    });
+    this.scrollToEnd();
+    this.$socket.$subscribe('allMsg', (obj) => {
+      console.log('received all records')
+      console.log(obj)
+      this.records = obj
+    })
+    this.$socket.$subscribe('broadcast', (obj) => {
+      console.log('broadcast')
+      console.log(obj)
+      this.records.push(obj)
+    })
+    this.$socket.$subscribe('onlineUser', (obj) => {
+      console.log('onlineUser')
+      console.log(obj)
+      this.onlineUsers = obj
+    })
+    this.$socket.$subscribe('chatMsg', (msg) => {
+      console.log(msg)
+      this.records.push(msg)
+    })
+    this.$socket.$subscribe('connect', () => {
+      console.log('emit received from server')
+    })
+    this.$socket.$subscribe('disconnectMsg', (obj) => {
+      console.log('disconnectMsg')
+      console.log(obj)
+    })
   },
   socket: {
     connect() {
-      console.log("socket connected");
+      console.log('socket connected')
+    },
+    login(value) {
+      console.log(value)
+    },
+    disconnect() {
+      console.log('socket disconnected')
     },
   },
   methods: {
     sendMessage() {
-      if (this.message === "") {
-        return;
+      if (this.message === '') {
+        return
       }
-      console.log('send new message');
-      this.$socket.emit("message", this.message);
-      this.message = "";
+      console.log('send new message')
+      this.$socket.client.emit('chat message', {
+        UserId: this.currentUser.id,
+        message: this.message,
+        createdAt: new Date(),
+      })
+      this.message = ''
+    },
+    scrollToEnd() {
+      const content = this.$refs.chatroom;
+      content.scrollTop = content.scrollHeight;
     },
   },
-  computed: {
-    ...mapState(["currentUser"]),
+  updated() {
+    this.scrollToEnd();
   },
-};
+  computed: {
+    ...mapState(['currentUser']),
+  },
+}
 </script>
 
 <style lang="scss" scoped>
@@ -214,52 +256,40 @@ export default {
 .chatroom {
   margin-top: auto;
   overflow-y: scroll;
+  padding: 2.5rem 0.938rem 0 0.938rem;
 }
 
-.chat-content {
-  padding: 1.5em 0;
-  height: 100%;
-}
-
-.msg-container {
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-}
-
-.chat-time {
-  font-size: 13px;
-  font-weight: 400;
-  color: #657786;
-}
-
-.left-other {
+// 別人傳來
+.client {
   display: flex;
   margin-bottom: 1em;
-  .img-panel {
-    display: flex;
-    flex-direction: column-reverse;
-    .chat-avatar {
-      display: inline-block;
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      margin: 0 10px 20px 10px;
-    }
+}
+.right-msg-panel {
+  display: flex;
+  align-items: flex-end;
+  max-width: 400px;
+  .chat-avatar {
+    display: inline-block;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    margin-right: 0.625rem;
   }
-  .left-msg-panel {
+}
+.left-msg-panel {
+  word-wrap: break-word;
+  .chat-msg {
     max-width: 365px;
-    .chat-msg {
-      font-size: 15px;
-      font-weight: 400;
-      background-color: #e6ecf0;
-      border-radius: 25px 25px 25px 0;
-      padding: 10px 15px 15px 15px;
-    }
+    font-size: 15px;
+    font-weight: 400;
+    background-color: #e6ecf0;
+    border-radius: 25px 25px 25px 0;
+    padding: 0.625rem 0.938rem;
   }
 }
 
-.right-self {
+// 自己的
+.self {
   display: flex;
   justify-content: end;
   margin-bottom: 1em;
@@ -268,18 +298,27 @@ export default {
     display: flex;
     flex-direction: column;
     align-items: end;
-    padding-right: 10px;
+    word-wrap: break-word;
     .chat-msg {
+      max-width: 365px;
       font-size: 15px;
       font-weight: 400;
       background-color: $button-color;
       color: $body-bg;
       border-radius: 25px 25px 0 25px;
-      padding: 10px 15px 15px 15px;
+      padding: 0.625rem 0.938rem;
     }
   }
 }
 
+// 共用時間 part
+.chat-time {
+  font-size: 13px;
+  font-weight: 400;
+  color: $input-placeholder;
+}
+
+// 上線狀態
 .center-info {
   display: flex;
   justify-content: center;
@@ -294,6 +333,7 @@ export default {
   }
 }
 
+// 輸入框
 .input-group {
   height: 55px;
   display: flex;
@@ -315,6 +355,8 @@ input {
 }
 
 .scrollbar {
+  scroll-behavior: smooth;
+  scroll-snap-align: end;
   // 整體的樣式
   &::-webkit-scrollbar {
     width: 0.25rem;
